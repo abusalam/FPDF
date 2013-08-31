@@ -6,8 +6,7 @@
 
 define('FPDF_FONTPATH', 'font/');
 
-require_once 'fpdf_protection.php';
-require_once '../lib.inc.php';
+require_once __DIR__ . '/fpdf_protection.php';
 
 class PDF extends FPDF_Protection {
 

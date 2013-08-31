@@ -11,7 +11,7 @@
  *          implement protection in pdf.                                     *
  * ************************************************************************** */
 
-require_once 'mem_image.php';
+require_once __DIR__ . '/mem_image.php';
 
 if (function_exists('mcrypt_encrypt')) {
 
