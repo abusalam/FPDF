@@ -21,7 +21,7 @@ class PDF extends FPDF_Protection {
 
   function PDF() {
     $this->PDF_MemImage("P", "mm", "A4");
-    $this->SetAuthor('eRecruitment 2013 Paschim Medinipur 1.0');
+    $this->SetAuthor('NIC Paschim Medinipur');
     $this->SetCreator('NIC Paschim Medinipur');
     $this->SetCompression(TRUE);
     $this->AliasNbPages();
@@ -102,7 +102,6 @@ class PDF extends FPDF_Protection {
     }
     $ns = $ns . trim($ln);
     $this->maxln = max(substr_count($ns, '|'), $this->maxln);
-    $c++;
     return $ns;
   }
 
@@ -149,37 +148,6 @@ class PDF extends FPDF_Protection {
     }
     else
       $this->Cell($w, $h, str_replace("|", ", ", $s), $b, 0, $align);
-  }
-
-  function Details($Query, $SlNo = 1, $lw = 0.1, $fw = 6) {
-    $this->SetFont('Arial', '', $fw);
-    $this->SetLineWidth($lw);
-    $Data = new DB();
-    $Data->do_sel_query($Query);
-    $c = 1;
-    while ($row = $Data->get_n_row()) {
-      $i = 0;
-      $row = $this->SplitLn($row);
-      $h = ($this->maxln * $this->fh) + 6;
-      $maxln = $this->maxln;
-      while ($i < count($this->colw)) {
-        if (($this->GetY() + $h) > $this->PageBreakTrigger) {
-          $this->AddPage();
-          $this->maxln = $maxln;
-        }
-        if (($i == 0) && ($SlNo == 1))
-          $this->Wrap($this->colw[$i], $c);
-        else
-          $this->Wrap($this->colw[$i], $row[$i]);
-        $i++;
-      }
-      $c++;
-      $this->Ln();
-    }
-    $Data->do_close();
-    unset($Data);
-    //$this->Write(0,$Query);
-    //$this->Ln();
   }
 
   function PreHeader() {
