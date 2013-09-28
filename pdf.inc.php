@@ -1,13 +1,44 @@
 <?php
 
-/* * ********************************************************************** */
-/*                   My Implemented PDF Class                            */
-/* * ********************************************************************** */
-
 define('FPDF_FONTPATH', 'font/');
 
 require_once __DIR__ . '/fpdf_protection.php';
 
+/**
+ * Extended FPDF Class implemented Memory Image and Protection Support
+ *
+ * Memory Image Signature:
+ * ===================
+ * MemImage(string data [, float x [, float y [, float w [, float h [, mixed link]]]]])
+ * MemImage($data, $x=null, $y=null, $w=0, $h=0, $link='')
+ *
+ * GDImage(resource im [, float x [, float y [, float w [, float h [, mixed link]]]]])
+ * GDImage($im, $x=null, $y=null, $w=0, $h=0, $link='')
+ *  #where im is the GD identifier.
+ *
+ * Ex.
+ *   //Load an image into a variable
+ *   $logo = file_get_contents('logo.jpg');
+ *   //Output it
+ *   $pdf->MemImage($logo, 50, 30);
+ *
+ * Protection Signature:
+ * =====================
+ *  SetProtection([array permissions [, string user_pass [, string owner_pass]]])
+ *  SetProtection($permissions=array(), $user_pass='', $owner_pass=null)
+ *
+ *   permissions: the set of permissions. Empty by default (only viewing is allowed).
+ *   user_pass: user password. Empty by default.
+ *   owner_pass: owner password. If not specified, a random value is used.
+ *
+ *  Permissions:
+ *    copy: copy text and images to the clipboard
+ *    print: print the document
+ *    modify: modify it (except for annotations and forms)
+ *    annot-forms: add annotations and forms
+ * Ex.
+ *   SetProtection(array('print'));
+ */
 class PDF extends FPDF_Protection {
 
   public $Query;
@@ -18,11 +49,12 @@ class PDF extends FPDF_Protection {
   public $fh = 3.5;
   private $PrintHeader = true;
 
-  function PDF() {
-    $this->PDF_MemImage("P", "mm", "A4");
+  function PDF($orientation = 'P', $unit = 'mm', $format = 'A4') {
+    $this->PDF_MemImage($orientation, $unit, $format);
     $this->SetAuthor('NIC Paschim Medinipur');
     $this->SetCreator('NIC Paschim Medinipur');
-    $this->SetCompression(TRUE);
+    $this->SetCompression(true);
+    $this->SetProtection(array('print'));
     $this->AliasNbPages();
     $this->SetMargins(10, 10, 10);
     $this->SetAutoPageBreak(true, 5);
@@ -34,17 +66,6 @@ class PDF extends FPDF_Protection {
 
   function Header() {
     if ($this->PrintHeader) {
-      //Arial bold 15
-      //$this->SetFont('Arial','',10);
-      //Calculate width of title and position
-      //$w=$this->GetStringWidth($title)+6;
-      //$this->SetX((210-$w)/2);
-      //$this->SetTextColor(0);
-      //Title
-      //$this->Wrap(0,$this->title,0);
-      //$this->Cell(0,7,$this->title,0,0,'C');
-      //$this->Wrap(0,$title,0);
-      //Line break
       $this->PreHeader();
       $i = 0;
       $this->SetFont('Arial', 'B', 8);
@@ -150,23 +171,12 @@ class PDF extends FPDF_Protection {
 
   function PreHeader() {
     $this->SetAutoPageBreak(true, 20);
-    $this->SetFont('Arial', 'B', 12);
-    $this->SetTextColor(0);
-    $this->SetFont('Arial', 'B', 8);
-    $this->Cell(0, 5, $_SESSION['AppID'], 0, 1, "C");
   }
 
   function PreFooter() {
-    $this->SetFont('Arial', '', 8);
-    $this->SetTextColor(0);
-    //$this->Ln(8);
-    //$this->SetX(125);
-    //$this->Cell(0,4,"Signature with Seal",0,2,"C");
-    //$this->Cell(0,4,"SRER 2013 Form6",0,1,"C");
     $this->SetY(-4);
   }
 
 }
 
-/* * *********************************** End of PDF Class ************************************** */
 ?>
