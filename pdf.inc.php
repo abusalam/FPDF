@@ -17,7 +17,6 @@ class PDF extends FPDF_Protection {
   public $cols;
   public $fh = 3.5;
   private $PrintHeader = true;
-  private $query;
 
   function PDF() {
     $this->PDF_MemImage("P", "mm", "A4");
@@ -46,8 +45,7 @@ class PDF extends FPDF_Protection {
       //$this->Cell(0,7,$this->title,0,0,'C');
       //$this->Wrap(0,$title,0);
       //Line break
-      //$this->Ln();
-      //$this->PreHeader();
+      $this->PreHeader();
       $i = 0;
       $this->SetFont('Arial', 'B', 8);
       $this->SetLineWidth(0.3);
@@ -90,7 +88,7 @@ class PDF extends FPDF_Protection {
     $ns = "";
     $ln = "";
     $i = 0;
-    $wd = split(' ', $s);
+    $wd = preg_split('# #', $s);
     while ($i < count($wd)) {
       if ((($this->GetStringWidth($ln) + $this->GetStringWidth($wd[$i])) >= $w) && ($ln != "") && (substr_count($s, '|') == 0)) {
         $ns = $ns . trim($ln) . '|';
